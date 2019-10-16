@@ -1,0 +1,14 @@
+[Unit]
+Description=rickroll
+After=graphical.target
+
+[Service]
+Environment=NODE_PATH=/usr/local/lib/node_modules
+Type=simple
+User=pi
+ExecStart=/usr/local/bin/node /home/pi/git/boot.js
+RemainAfterExit=no
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

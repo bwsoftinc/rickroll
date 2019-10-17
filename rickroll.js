@@ -20,7 +20,7 @@ const reset = () => {
     });
 ;}
 
-const sample = async (log) => {
+const sample = async (log, temponly) => {
 
     if(playing === null) {
         playing = true;
@@ -33,7 +33,9 @@ const sample = async (log) => {
             console.log(val);
 
         playing = queue.sample(val);
-        if(playing) {
+        if(temponly)
+            playing = false;
+        else if(playing) {
             setTimeout(() => gpio.writeSync(1), 1700);
             proc = spawn('omxplayer',['--vol','800','/home/pi/git/rickroll/Rick-Astley-Never-Gonna-Give-You-Up.mp3'])
             if(log)
@@ -52,21 +54,23 @@ const sample = async (log) => {
 };
 
 class rickroll {
-    constructor() {
+    constructor(temponly) {
         var stdin = process.stdin;
-        stdin.setRawMode(true);
-        stdin.resume();
-        stdin.on('data', (key) => {
-            if(key == '\u0003') {
-                gpio.writeSync(0);
-                if(proc)
-                    exec('killall omxplayer.bin');
-                process.exit(1);
-            }
-        });
+        if(stdin.isTTY) {
+            stdin.setRawMode(true);
+            stdin.resume();
+            stdin.on('data', (key) => {
+                if(key == '\u0003') {
+                    gpio.writeSync(0);
+                    if(proc)
+                        exec('killall omxplayer.bin');
+                    process.exit(1);
+                }
+            });
+        }
 
         this.start = function(log) {
-            sample(log);
+            sample(log, temponly);
         }
     }
 }

@@ -50,7 +50,7 @@ const sample = async (log, temponly) => {
         }
     }
 
-    setTimeout(() => sample(log), 250);
+    setTimeout(() => sample(log, temponly), 150);
 };
 
 class rickroll {
